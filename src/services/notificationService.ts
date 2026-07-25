@@ -59,7 +59,8 @@ export const notificationService = {
       return;
     }
 
-    const icon = iconUrl || '/pwa-icon.png';
+    const icon = iconUrl || '/favicon.svg';
+    const tag = `vp-alert-${Date.now()}`;
 
     // If Service Worker is ready, use showNotification for background/offline notification support
     if (swRegistration && 'showNotification' in swRegistration) {
@@ -67,17 +68,19 @@ export const notificationService = {
         body,
         icon,
         badge: icon,
-        tag: 'vaishnavi-society-alert',
-      }).catch(() => {
+        tag,
+        renotify: true,
+        vibrate: [200, 100, 200],
+      } as any).catch(() => {
         // Fallback to standard Notification
-        new Notification(title, { body, icon, tag: 'vaishnavi-society-alert' });
+        new Notification(title, { body, icon, tag });
       });
     } else {
       try {
         new Notification(title, {
           body,
           icon,
-          tag: 'vaishnavi-society-alert',
+          tag,
         });
       } catch (err) {
         console.warn('[Notification Trigger Error]', err);
