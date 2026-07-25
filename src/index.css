@@ -1,0 +1,322 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-950 text-slate-100 antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+  }
+}
+
+/* Glassmorphism utilities */
+.glass-panel {
+  @apply bg-slate-900/80 backdrop-blur-md border border-slate-800/80 rounded-2xl shadow-xl shadow-black/20;
+  transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.glass-panel-interactive {
+  @apply bg-slate-900/80 backdrop-blur-md border border-slate-800/80 hover:border-slate-700/80 rounded-2xl transition-all duration-300 shadow-xl shadow-black/20 hover:shadow-sky-500/5;
+}
+
+.glass-pill {
+  @apply bg-slate-800/60 backdrop-blur-sm border border-slate-700/50 rounded-full;
+  transition: background-color 0.4s ease, border-color 0.4s ease;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #090d16;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Text Shimmer Animation */
+@keyframes textShimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-text-shimmer {
+  background-size: 200% auto;
+  animation: textShimmer 4s ease infinite;
+}
+
+/* Dynamic Hero Gradient Background Shift */
+@keyframes bgGradientShift {
+  0% {
+    background-position: 0% 0%;
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    background-position: 100% 100%;
+    filter: hue-rotate(30deg);
+  }
+  100% {
+    background-position: 0% 0%;
+    filter: hue-rotate(0deg);
+  }
+}
+
+.animate-hero-bg {
+  background-size: 200% 200%;
+  animation: bgGradientShift 10s ease-in-out infinite;
+}
+
+/* Glowing Neon Title Aura Pulse */
+@keyframes titleGlowPulse {
+  0%, 100% {
+    text-shadow: 0 0 20px rgba(56, 189, 248, 0.4), 0 0 40px rgba(99, 102, 241, 0.3), 0 0 60px rgba(56, 189, 248, 0.2);
+    transform: scale(1);
+  }
+  50% {
+    text-shadow: 0 0 35px rgba(56, 189, 248, 0.8), 0 0 70px rgba(99, 102, 241, 0.6), 0 0 100px rgba(56, 189, 248, 0.4);
+    transform: scale(1.03);
+  }
+}
+
+.animate-title-glow {
+  animation: titleGlowPulse 3.5s ease-in-out infinite;
+}
+
+/* Floating Particles Animation */
+@keyframes particleFloat1 {
+  0%, 100% { transform: translateY(0px) translateX(0px) scale(1); opacity: 0.4; }
+  50% { transform: translateY(-25px) translateX(15px) scale(1.2); opacity: 0.8; }
+}
+
+@keyframes particleFloat2 {
+  0%, 100% { transform: translateY(0px) translateX(0px) scale(1.2); opacity: 0.6; }
+  50% { transform: translateY(30px) translateX(-20px) scale(0.9); opacity: 0.3; }
+}
+
+.animate-particle-1 {
+  animation: particleFloat1 6s ease-in-out infinite;
+}
+
+.animate-particle-2 {
+  animation: particleFloat2 8s ease-in-out infinite;
+}
+
+/* Card Hover Animation */
+.hover-glow-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.hover-glow-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 20px 30px -10px rgba(56, 189, 248, 0.25);
+  border-color: rgba(56, 189, 248, 0.6);
+}
+
+/* ==========================================================================
+   4 PREMIUM DARK AESTHETIC THEMES (CYBER NEON, EMERALD JADE, ROYAL AMETHYST, SUNSET AMBER)
+   ========================================================================== */
+
+/* 1. CYBER NEON (DEFAULT MIDNIGHT SLATE / CYAN & ELECTRIC INDIGO) */
+.theme-cyber body {
+  background-color: #020617 !important;
+  color: #f8fafc !important;
+}
+
+/* 2. EMERALD JADE (OBSIDIAN DARK EMERALD & MINT NEON GLOW) */
+.theme-emerald body {
+  background-color: #03140f !important;
+  color: #f0fdf4 !important;
+}
+
+.theme-emerald header {
+  background-color: rgba(4, 26, 20, 0.95) !important;
+  border-bottom-color: #0d382d !important;
+}
+
+.theme-emerald footer {
+  background-color: #03140f !important;
+  border-top-color: #0d382d !important;
+}
+
+.theme-emerald .glass-panel,
+.theme-emerald .glass-panel-interactive {
+  background-color: rgba(6, 40, 32, 0.85) !important;
+  border-color: #0f4a3c !important;
+  color: #f0fdf4 !important;
+}
+
+.theme-emerald .glass-pill {
+  background-color: rgba(10, 56, 45, 0.7) !important;
+  border-color: #125c4b !important;
+}
+
+.theme-emerald .bg-slate-950,
+.theme-emerald .bg-slate-900 {
+  background-color: #05241b !important;
+}
+
+.theme-emerald .bg-slate-900\/90,
+.theme-emerald .bg-slate-900\/80,
+.theme-emerald .bg-slate-900\/60,
+.theme-emerald .bg-slate-900\/70,
+.theme-emerald .bg-slate-900\/98 {
+  background-color: rgba(6, 40, 32, 0.95) !important;
+}
+
+.theme-emerald .bg-slate-950\/70,
+.theme-emerald .bg-slate-950\/90,
+.theme-emerald .bg-slate-950\/95,
+.theme-emerald .bg-slate-950\/98 {
+  background-color: rgba(3, 20, 15, 0.95) !important;
+}
+
+.theme-emerald .border-slate-800,
+.theme-emerald .border-slate-800\/80,
+.theme-emerald .border-slate-700,
+.theme-emerald .border-slate-700\/80 {
+  border-color: #0f4a3c !important;
+}
+
+.theme-emerald .hover-glow-card:hover {
+  box-shadow: 0 20px 30px -10px rgba(52, 211, 153, 0.3) !important;
+  border-color: #34d399 !important;
+}
+
+.theme-emerald .animate-title-glow {
+  text-shadow: 0 0 25px rgba(52, 211, 153, 0.8), 0 0 50px rgba(20, 184, 166, 0.6), 0 0 80px rgba(52, 211, 153, 0.4) !important;
+}
+
+/* 3. ROYAL AMETHYST (NIGHT VIOLET & NEON MAGENTA) */
+.theme-amethyst body {
+  background-color: #0d0614 !important;
+  color: #faf5ff !important;
+}
+
+.theme-amethyst header {
+  background-color: rgba(20, 8, 31, 0.95) !important;
+  border-bottom-color: #381552 !important;
+}
+
+.theme-amethyst footer {
+  background-color: #0d0614 !important;
+  border-top-color: #381552 !important;
+}
+
+.theme-amethyst .glass-panel,
+.theme-amethyst .glass-panel-interactive {
+  background-color: rgba(30, 12, 48, 0.85) !important;
+  border-color: #4a1c6e !important;
+  color: #faf5ff !important;
+}
+
+.theme-amethyst .glass-pill {
+  background-color: rgba(45, 17, 74, 0.7) !important;
+  border-color: #5c228a !important;
+}
+
+.theme-amethyst .bg-slate-950,
+.theme-amethyst .bg-slate-900 {
+  background-color: #240e3b !important;
+}
+
+.theme-amethyst .bg-slate-900\/90,
+.theme-amethyst .bg-slate-900\/80,
+.theme-amethyst .bg-slate-900\/60,
+.theme-amethyst .bg-slate-900\/70,
+.theme-amethyst .bg-slate-900\/98 {
+  background-color: rgba(30, 12, 48, 0.95) !important;
+}
+
+.theme-amethyst .bg-slate-950\/70,
+.theme-amethyst .bg-slate-950\/90,
+.theme-amethyst .bg-slate-950\/95,
+.theme-amethyst .bg-slate-950\/98 {
+  background-color: rgba(13, 6, 20, 0.95) !important;
+}
+
+.theme-amethyst .border-slate-800,
+.theme-amethyst .border-slate-800\/80,
+.theme-amethyst .border-slate-700,
+.theme-amethyst .border-slate-700\/80 {
+  border-color: #4a1c6e !important;
+}
+
+.theme-amethyst .hover-glow-card:hover {
+  box-shadow: 0 20px 30px -10px rgba(232, 121, 249, 0.35) !important;
+  border-color: #e879f9 !important;
+}
+
+.theme-amethyst .animate-title-glow {
+  text-shadow: 0 0 25px rgba(232, 121, 249, 0.85), 0 0 50px rgba(192, 38, 211, 0.65), 0 0 80px rgba(232, 121, 249, 0.45) !important;
+}
+
+/* 4. SUNSET AMBER (DARK CHARCOAL, GOLDEN AMBER & ROSE GOLD) */
+.theme-amber body {
+  background-color: #140a07 !important;
+  color: #fffbeb !important;
+}
+
+.theme-amber header {
+  background-color: rgba(31, 14, 10, 0.95) !important;
+  border-bottom-color: #4d2015 !important;
+}
+
+.theme-amber footer {
+  background-color: #140a07 !important;
+  border-top-color: #4d2015 !important;
+}
+
+.theme-amber .glass-panel,
+.theme-amber .glass-panel-interactive {
+  background-color: rgba(46, 20, 14, 0.85) !important;
+  border-color: #632b1c !important;
+  color: #fffbeb !important;
+}
+
+.theme-amber .glass-pill {
+  background-color: rgba(69, 29, 20, 0.7) !important;
+  border-color: #7d3724 !important;
+}
+
+.theme-amber .bg-slate-950,
+.theme-amber .bg-slate-900 {
+  background-color: #3b1911 !important;
+}
+
+.theme-amber .bg-slate-900\/90,
+.theme-amber .bg-slate-900\/80,
+.theme-amber .bg-slate-900\/60,
+.theme-amber .bg-slate-900\/70,
+.theme-amber .bg-slate-900\/98 {
+  background-color: rgba(46, 20, 14, 0.95) !important;
+}
+
+.theme-amber .bg-slate-950\/70,
+.theme-amber .bg-slate-950\/90,
+.theme-amber .bg-slate-950\/95,
+.theme-amber .bg-slate-950\/98 {
+  background-color: rgba(20, 10, 7, 0.95) !important;
+}
+
+.theme-amber .border-slate-800,
+.theme-amber .border-slate-800\/80,
+.theme-amber .border-slate-700,
+.theme-amber .border-slate-700\/80 {
+  border-color: #632b1c !important;
+}
+
+.theme-amber .hover-glow-card:hover {
+  box-shadow: 0 20px 30px -10px rgba(251, 191, 36, 0.35) !important;
+  border-color: #fbbf24 !important;
+}
+
+.theme-amber .animate-title-glow {
+  text-shadow: 0 0 25px rgba(251, 191, 36, 0.85), 0 0 50px rgba(244, 63, 94, 0.65), 0 0 80px rgba(251, 191, 36, 0.45) !important;
+}
