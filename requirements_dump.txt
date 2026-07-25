@@ -1,0 +1,204 @@
+=== PAGE 1 ===
+  High-Rise Society Management Application
+
+   Complete Technical Requirements & Functional Specifications Document
+
+
+
+
+    BUILDING PROFILE        DEPLOYMENT COST TARGET PLATFORM TYPE          TARGET PLATFORM
+
+    22 Floors | 154 Units         $0.00 / Month (100% Free)    Responsive Web App (PWA)   Antigravity Engine
+
+
+
+  1. Project Scope & Operational Overview
+
+
+   This document specifies the operational logic, user workflows, data schema specifications, and zero-cost
+   infrastructure architecture for a full-fledged society web application designed for a 22-floor residential tower
+  housing 154 families.
+
+  Primary Objective: Eliminate resident friction, provide 100% financial transparency, streamline common area
+  maintenance, and handle building emergency communications without recurring infrastructure costs.
+
+
+
+  2. User Roles & Permission Matrix
+
+
+  Role Type          Target Users                 Primary Permissions & System Access
+
+
+  Resident User       Flat owners, co-residents,       Raise public tickets, view live financial ledger, upload payment
+                      tenants (154 units)                receipts, book amenity slots, receive broadcast alerts.
+
+
+ Management       Society Secretary, Treasurer,     Approve/verify payment slips, record society expenses, update ticket
+ Admin            Committee Members             resolution status, post pinned notices, manage amenity blocks.
+
+
+  Auditor / Public      All Building Members           Read-only view of society expenses, balance breakdowns,
+  View                (Transparent View)             maintenance payment status per flat, resolved ticket logs.
+
+
+  3. Functional Specifications (Core Modules)
+
+
+3.1 Transparent Ticket & Maintenance Board
+
+
+      1. Issue Creation
+     Resident submits title, category (Elevator, Plumbing, Lighting, Cleanliness, Parking, Security), detailed text
+      description, location tag (e.g., Floor 14 Common Hallway), and attaches compressed photo proof.
+
+      2. Real-Time Broadcast Alert
+     System automatically drops a real-time event notice to all 154 flats. Prevents duplicate ticket submission
+       for public area issues.
+
+      3. Admin Assignment & Progression
+     Admin sets priority level (Urgent / Normal / Scheduled), assigns vendor/maintenance staff, and updates
+      status (Open → In Progress → Resolved).
+
+      4. Resolution & Proof Notification
+
+
+
+
+
+Society Operations & Financial Management System — Requirements Doc                                            Page 1 of 3
+
+=== PAGE 2 ===
+     Once marked Resolved, the app notifies all residents with "After" photo proof attached. The original
+      reporter has 24 hours to reopen or rate the service.
+
+
+
+3.2 General Announcement Board
+
+  • Categorized Notices: Tagged as EMERGENCY  , MAINTENANCE  , COMMUNITY  , or General Notice.
+
+  • Pinning Engine: Critical announcements stay fixed at the top of the resident dashboard until dismissed or
+   unpinned by admins.
+
+  • Read Audit Counter: Tracks flat-level view receipts (e.g., "Acknowledged by 128 / 154 Flats") so management
+  knows when notices are seen.
+
+3.3 Community Expense & Fund Tracker
+
+
+  Payment Deposit Workflow:
+
+   1. Resident completes monthly maintenance payment via UPI to the society bank account.
+
+   2. Resident uploads transaction reference ID, payment month, paid amount, and screenshot of the UPI
+      transaction receipt.
+
+   3. System marks entry status as PENDING VERIFICATION  .
+
+   4. Admin verifies screenshot against bank receipts and clicks Approve. Entry transitions to  VERIFIED  .
+
+  Debit & Outflow Tracker:
+
+     • Admin registers all outgoing society funds (e.g., Cleaner wages, Security agency payment, Electricity bills,
+      Elevator AMC).
+
+     • Admin attaches mandatory vendor receipt/invoice soft copy for public auditing.
+
+  Public Financial Dashboard: Live public formula computes total verified deposits minus total society
+  expenses to display the current remaining net balance of the building fund.
+
+
+
+3.4 Amenity Booking System
+
+  • Supported Facilities: Clubhouse, Terrace Garden, Party Lawn, Gym, Tennis Court.
+
+  • Conflict Prevention Rules: Automatic slot validation preventing overlapping booking requests for the same
+   date/time window.
+
+  • Fair Use Policies: Maximum limits enforced per flat (e.g., maximum 1 weekend party booking per month per
+    unit).
+
+3.5 Emergency Broadcast & Contact Directory
+
+  • One-Tap Push Alerts: Direct browser push notifications to desktop and mobile devices for sudden water/power
+   outages or fire alerts.
+
+  • Telegram Bot Fallback Integration: Simultaneous emergency alert dispatch to the building’s main Telegram
+   group via automated API trigger.
+
+  • Offline Contact Caching: Critical numbers (Security Desk, Elevator Technician, Electrician, Plumber, Nearby
+  Emergency Hospitals) stored in local browser memory for offline access.
+
+
+  4. Database Architecture & Data Entities
+
+The system requires 6 core relational data entities structured as follows:
+
+
+
+
+Society Operations & Financial Management System — Requirements Doc                                            Page 2 of 3
+
+=== PAGE 3 ===
+  Entity Name         Attributes / Fields                                                Relationships
+
+
+  Flats                  ID, Flat Number, Floor Number (1-22), Owner Name, Resident          One-to-Many with Tickets
+                        Contact, Role (Resident/Admin).                           & Payments
+
+
+  Tickets               ID, Flat ID (Foreign Key), Title, Description, Category, Photo URLs,      Belongs to Flat
+                       Status (Open/In Progress/Resolved), Timestamps.
+
+
+  Payments             ID, Flat ID (Foreign Key), Amount, Month/Year, Transaction Ref,         Belongs to Flat
+                      Screenshot URL, Status (Pending/Verified/Rejected).
+
+
+  Society               ID, Title, Category, Amount Paid, Vendor Name, Invoice/Receipt URL,    Standalone Ledger Entry
+  Expenses          Date Paid, Approved By Admin ID.
+
+
+  Announcements     ID, Title, Content, Priority Category, Is Pinned (Boolean), Created At,     One-to-Many with Read
+                      Author Admin ID.                                                       Audit
+
+
+  Amenity              ID, Flat ID (Foreign Key), Amenity Name, Start Time, End Time,         Belongs to Flat
+  Bookings            Status (Confirmed/Cancelled).
+
+
+  5. Zero-Cost Infrastructure & Limits Strategy
+
+
+  Strategy for Staying $0.00 / Month Forever:
+
+     • Client-Side Image Compression: All ticket photos and UPI payment screenshots are compressed directly
+       in the resident's web browser down to ~150 KB prior to server upload. This extends 1 GB free cloud
+     storage capacity to handle over 6,500 file uploads.
+
+     • Progressive Web App (PWA): App can be installed directly onto Android/iOS home screens via browser
+     prompts without paying Apple or Google developer store fee subscriptions.
+
+     • PostgreSQL Free Tier Optimization: Auto-purge or archive resolved ticket logs and verified receipts older
+     than 24 months to maintain database size well under the 500 MB free allocation limit.
+
+
+
+  6. Non-Functional Requirements
+
+  • Mobile-First Responsiveness: Optimized for quick phone browser usage by residents and guards.
+
+  • Data Security & Isolation: Row Level Security policies ensure residents can only edit their own profile and
+  payment submissions, while financial totals and ticket boards remain transparently readable building-wide.
+
+  • Uptime & Availability: High availability serverless infrastructure ensuring 99.9% uptime during emergency
+   broadcasts.
+
+
+
+
+
+Society Operations & Financial Management System — Requirements Doc                                            Page 3 of 3
+

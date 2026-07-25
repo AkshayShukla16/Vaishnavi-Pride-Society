@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vaishnavi Pride - High-Rise Society Operations & Financial Management</title>
+    <meta name="description" content="Operational logic, transparent financial ledger, tickets, amenities, and emergency alerts for 22 Floors / 154 Units of Vaishnavi Pride." />
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- OneSignal Web Push SDK -->
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+          appId: "d97c4252-2c37-42c0-b864-51b88bab013d",
+          serviceWorkerPath: "/OneSignalSDKWorker.js",
+          promptOptions: {
+            slidedown: {
+              enabled: true,
+              autoPrompt: true,
+              timeDelay: 5,
+              pageViews: 1,
+              actionMessage: "🏢 Vaishnavi Pride Society wants to send you emergency SOS alerts.",
+              acceptButtonText: "✅ Allow Alerts",
+              cancelButtonText: "Later",
+            }
+          },
+          welcomeNotification: {
+            title: "🏢 Vaishnavi Pride Society",
+            message: "You are now subscribed to Emergency SOS Alerts!",
+          },
+          notifyButton: {
+            enable: false,
+          },
+        });
+      });
+    </script>
+  </head>
+  <body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen selection:bg-sky-500 selection:text-white">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

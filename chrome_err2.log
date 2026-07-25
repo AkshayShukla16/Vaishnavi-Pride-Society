@@ -1,0 +1,4 @@
+
+DevTools listening on ws://127.0.0.1:9222/devtools/browser/fc02d3e9-ac27-4157-b171-16d98ca8bdd3
+[21744:5988:0725/150655.489:ERROR:google_apis\gcm\engine\registration_request.cc:291] Registration response error message: PHONE_REGISTRATION_ERROR
+[21744:5988:0725/150655.492:ERROR:google_apis\gcm\engine\registration_request.cc:291] Registration response error message: PHONE_REGISTRATION_ERROR
