@@ -6,8 +6,11 @@
 
 import { Ticket, Announcement, AmenityBooking } from '../types/society';
 
-const APP_ID      = import.meta.env.VITE_ONESIGNAL_APP_ID      as string;
-const REST_API_KEY = import.meta.env.VITE_ONESIGNAL_REST_API_KEY as string;
+const DEFAULT_ONESIGNAL_APP_ID = 'd97c4252-2c37-42c0-b864-51b88bab013d';
+const DEFAULT_ONESIGNAL_REST_KEY = 'os_v2_app_3f6eeurmg5bmbodekg4ixkybhwov5yurdtxu3ruyo7xyk2zsydsxo3zfvzjmbyvpdkfrte4znr6e5vb5csq24nvwmzouw4niqr6xq2a';
+
+const APP_ID      = (import.meta.env.VITE_ONESIGNAL_APP_ID as string) || DEFAULT_ONESIGNAL_APP_ID;
+const REST_API_KEY = (import.meta.env.VITE_ONESIGNAL_REST_API_KEY as string) || DEFAULT_ONESIGNAL_REST_KEY;
 
 export interface SOSPayload {
   title: string;
