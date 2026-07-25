@@ -35,13 +35,36 @@ const ALERT_COLORS: Record<string, string> = {
 };
 
 /**
- * Common REST API POST caller to OneSignal
+ * Common REST API POST caller to OneSignal (Tries Vercel Serverless Proxy first for 100% CORS-free server dispatch)
  */
 async function postOneSignalNotification(body: Record<string, any>): Promise<{
   success: boolean;
   recipientCount?: number;
   error?: string;
 }> {
+  // 1. Try Vercel Serverless Function Endpoint (Bypasses Browser CORS restrictions completely)
+  try {
+    const serverlessRes = await fetch('/api/send-push', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: body.headings?.en || 'Vaishnavi Pride Alert',
+        message: body.contents?.en || '',
+        url: body.url || 'https://de-society.vercel.app',
+      }),
+    });
+
+    if (serverlessRes.ok) {
+      const data = await serverlessRes.json();
+      if (data.id) {
+        console.log(`[OneSignal Serverless Push Success] ID: ${data.id}, Recipients: ${data.recipients}`);
+        return { success: true, recipientCount: data.recipients ?? 0 };
+      }
+    }
+  } catch (err) {
+    console.warn('[Serverless Push Proxy Fallback] Trying direct REST call...', err);
+  }
+
   if (!APP_ID || !REST_API_KEY) {
     console.warn('[OneSignal] Missing App ID or REST API Key');
     return { success: false, error: 'OneSignal not configured.' };
@@ -68,22 +91,21 @@ async function postOneSignalNotification(body: Record<string, any>): Promise<{
     }
   };
 
-  // 1. Primary Attempt with Key
+  // 2. Direct Attempt with Key
   let res = await tryPost(`Key ${REST_API_KEY}`);
 
-  // 2. Fallback Attempt with Basic if 401 / 403
   if (!res.response?.ok && (res.response?.status === 401 || res.response?.status === 403)) {
     res = await tryPost(`Basic ${REST_API_KEY}`);
   }
 
   if (res.response?.ok && res.data?.id) {
-    console.log(`[OneSignal] ✅ Push Notification Dispatched! ID: ${res.data.id}, Recipients: ${res.data.recipients}`);
+    console.log(`[OneSignal Direct Success] ID: ${res.data.id}, Recipients: ${res.data.recipients}`);
     return { success: true, recipientCount: res.data.recipients ?? 0 };
   } else {
     const errMsg = res.data?.errors
       ? (Array.isArray(res.data.errors) ? res.data.errors.join(', ') : JSON.stringify(res.data.errors))
       : (res.fetchError || `HTTP ${res.response?.status}`);
-    console.error('[OneSignal] ❌ Send failed:', errMsg);
+    console.error('[OneSignal Direct Error]:', errMsg);
     return { success: false, error: String(errMsg) };
   }
 }
