@@ -231,10 +231,13 @@ export interface SupabaseConfig {
   anonKey?: string;
 }
 
+const DEFAULT_SUPABASE_URL = 'https://yzehspgqmquognzepmli.supabase.co';
+const DEFAULT_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl6ZWhzcGdxbXF1b2duemVwbWxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ5MTE3NjEsImV4cCI6MjEwMDQ4Nzc2MX0.KAoKR2rljOMFoEx6dQaxhjbfJiDW587spjWZqOQJPbo';
+
 export const getSupabaseConfig = (): SupabaseConfig => {
   return {
-    url: import.meta.env.VITE_SUPABASE_URL || '',
-    anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY || ''
+    url: (import.meta.env.VITE_SUPABASE_URL as string) || DEFAULT_SUPABASE_URL,
+    anonKey: (import.meta.env.VITE_SUPABASE_ANON_KEY as string) || DEFAULT_SUPABASE_ANON_KEY,
   };
 };
 
