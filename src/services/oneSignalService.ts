@@ -5,6 +5,7 @@
  */
 
 import { Ticket, Announcement, AmenityBooking } from '../types/society';
+import { notificationService } from './notificationService';
 
 const DEFAULT_ONESIGNAL_APP_ID = 'd97c4252-2c37-42c0-b864-51b88bab013d';
 const DEFAULT_ONESIGNAL_REST_KEY = 'os_v2_app_3f6eeurmg5bmbodekg4ixkybhwov5yurdtxu3ruyo7xyk2zsydsxo3zfvzjmbyvpdkfrte4znr6e5vb5csq24nvwmzouw4niqr6xq2a';
@@ -42,16 +43,21 @@ async function postOneSignalNotification(body: Record<string, any>): Promise<{
   error?: string;
 }> {
   if (!APP_ID || !REST_API_KEY) {
-    console.warn('[OneSignal] Missing App ID or REST API Key in .env');
+    console.warn('[OneSignal] Missing App ID or REST API Key');
     return { success: false, error: 'OneSignal not configured.' };
   }
+
+  // Clean payload for API v1
+  delete body.target_channel;
+
+  const authHeader = REST_API_KEY.startsWith('os_v2_') ? `Key ${REST_API_KEY}` : `Basic ${REST_API_KEY}`;
 
   try {
     const response = await fetch('https://api.onesignal.com/api/v1/notifications', {
       method: 'POST',
       headers: {
         'Content-Type':  'application/json',
-        'Authorization': `Key ${REST_API_KEY}`,
+        'Authorization': authHeader,
         'Accept':        'application/json',
       },
       body: JSON.stringify(body),
@@ -63,9 +69,9 @@ async function postOneSignalNotification(body: Record<string, any>): Promise<{
       console.log(`[OneSignal] ✅ Push Notification Dispatched! ID: ${data.id}, Recipients: ${data.recipients}`);
       return { success: true, recipientCount: data.recipients ?? 0 };
     } else {
-      const errMsg = data.errors?.[0] || data.error || `HTTP ${response.status}`;
+      const errMsg = Array.isArray(data.errors) ? data.errors.join(', ') : (data.errors || data.error || `HTTP ${response.status}`);
       console.error('[OneSignal] ❌ Send failed:', errMsg);
-      return { success: false, error: errMsg };
+      return { success: false, error: String(errMsg) };
     }
   } catch (err: any) {
     console.error('[OneSignal] ❌ Network error:', err);
@@ -85,11 +91,13 @@ export async function sendSOSPushNotification(payload: SOSPayload): Promise<{
   const color = ALERT_COLORS[payload.type] || 'FF3A3A';
   const targetUrl = typeof window !== 'undefined' ? window.location.href : 'https://de-society.vercel.app';
 
+  // Trigger local native browser OS push notification immediately
+  notificationService.sendNotification(`${icon} ${payload.title}`, payload.message);
+
   const body = {
     app_id:             APP_ID,
     name:               `VP SOS: ${payload.type} Alert`,
-    target_channel:     'push',
-    included_segments:  ['Subscribed Users', 'All'],
+    included_segments:  ['All', 'Subscribed Users'],
     headings:           { en: `${icon} ${payload.title}` },
     contents:           { en: payload.message },
     subtitle:           { en: `Triggered by Flat #${payload.flatNumber} · Vaishnavi Pride` },
@@ -135,11 +143,13 @@ export async function sendTicketPushNotification(
     color = '28A745'; // Green
   }
 
+  // Trigger local native browser OS push notification immediately
+  notificationService.sendNotification(heading, contents);
+
   const body = {
     app_id: APP_ID,
     name: `VP Ticket: ${type} - ${ticket.id}`,
-    target_channel: 'push',
-    included_segments: ['Subscribed Users', 'All'],
+    included_segments: ['All', 'Subscribed Users'],
     headings: { en: heading },
     contents: { en: contents },
     subtitle: { en: `Vaishnavi Pride Society Maintenance` },
@@ -181,11 +191,13 @@ export async function sendAnnouncementPushNotification(
   const color = categoryColors[announcement.priorityCategory] || '00B4D8';
   const targetUrl = typeof window !== 'undefined' ? window.location.href : 'https://de-society.vercel.app';
 
+  // Trigger local native browser OS push notification immediately
+  notificationService.sendNotification(`${icon} ${announcement.priorityCategory}: ${announcement.title}`, announcement.content);
+
   const body = {
     app_id: APP_ID,
     name: `VP Notice: ${announcement.title}`,
-    target_channel: 'push',
-    included_segments: ['Subscribed Users', 'All'],
+    included_segments: ['All', 'Subscribed Users'],
     headings: { en: `${icon} ${announcement.priorityCategory}: ${announcement.title}` },
     contents: { en: announcement.content },
     subtitle: { en: `Posted by ${announcement.byWhom || 'Management'} · Vaishnavi Pride Notice Board` },
@@ -212,13 +224,18 @@ export async function sendAmenityPushNotification(
   const facility = booking.facilityType || booking.amenityName || 'Amenity';
   const targetUrl = typeof window !== 'undefined' ? window.location.href : 'https://de-society.vercel.app';
 
+  const heading = `🎉 Amenity Reserved: ${facility}`;
+  const contents = `Booked by ${booking.personName} (Flat #${booking.flatNumber}, Ph: ${booking.mobileNumber}) for ${booking.bookingDate} (${booking.startTime} - ${booking.endTime}).`;
+
+  // Trigger local native browser OS push notification immediately
+  notificationService.sendNotification(heading, contents);
+
   const body = {
     app_id: APP_ID,
     name: `VP Amenity Reserved: ${facility}`,
-    target_channel: 'push',
-    included_segments: ['Subscribed Users', 'All'],
-    headings: { en: `🎉 Amenity Reserved: ${facility}` },
-    contents: { en: `Booked by ${booking.personName} (Flat #${booking.flatNumber}, Ph: ${booking.mobileNumber}) for ${booking.bookingDate} (${booking.startTime} - ${booking.endTime}).` },
+    included_segments: ['All', 'Subscribed Users'],
+    headings: { en: heading },
+    contents: { en: contents },
     subtitle: { en: `Vaishnavi Pride Amenity Booking Engine` },
     url: targetUrl,
     android_accent_color: '9C27B0',
@@ -241,7 +258,7 @@ export async function getSubscriberCount(): Promise<number> {
   if (!APP_ID || !REST_API_KEY) return 0;
   try {
     const response = await fetch(`https://api.onesignal.com/api/v1/apps/${APP_ID}`, {
-      headers: { 'Authorization': `Key ${REST_API_KEY}` },
+      headers: { 'Authorization': REST_API_KEY.startsWith('os_v2_') ? `Key ${REST_API_KEY}` : `Basic ${REST_API_KEY}` },
     });
     if (response.ok) {
       const data = await response.json();
@@ -250,4 +267,3 @@ export async function getSubscriberCount(): Promise<number> {
   } catch { /* silent */ }
   return 0;
 }
-
