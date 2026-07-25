@@ -97,19 +97,20 @@ export async function sendSOSPushNotification(payload: SOSPayload): Promise<{
   const body = {
     app_id:             APP_ID,
     name:               `VP SOS: ${payload.type} Alert`,
-    included_segments:  ['All', 'Subscribed Users'],
+    included_segments:  ['Subscribed Users'],
     headings:           { en: `${icon} ${payload.title}` },
     contents:           { en: payload.message },
     subtitle:           { en: `Triggered by Flat #${payload.flatNumber} · Vaishnavi Pride` },
     url:                targetUrl,
     android_accent_color: color,
+    android_visibility: 1,
+    content_available:  true,
+    priority:           10,
     chrome_web_icon:    '/favicon.svg',
     firefox_icon:       '/favicon.svg',
     web_buttons: [
       { id: 'ack', text: '✅ View Alert', url: targetUrl },
     ],
-    ttl: 86400,
-    priority: 10,
   };
 
   return postOneSignalNotification(body);
@@ -149,19 +150,20 @@ export async function sendTicketPushNotification(
   const body = {
     app_id: APP_ID,
     name: `VP Ticket: ${type} - ${ticket.id}`,
-    included_segments: ['All', 'Subscribed Users'],
+    included_segments: ['Subscribed Users'],
     headings: { en: heading },
     contents: { en: contents },
     subtitle: { en: `Vaishnavi Pride Society Maintenance` },
     url: targetUrl,
     android_accent_color: color,
+    android_visibility: 1,
+    content_available: true,
+    priority: 10,
     chrome_web_icon: '/favicon.svg',
     firefox_icon: '/favicon.svg',
     web_buttons: [
       { id: 'view_ticket', text: '🔍 View Ticket', url: targetUrl },
     ],
-    ttl: 86400,
-    priority: 10,
   };
 
   return postOneSignalNotification(body);
@@ -197,19 +199,20 @@ export async function sendAnnouncementPushNotification(
   const body = {
     app_id: APP_ID,
     name: `VP Notice: ${announcement.title}`,
-    included_segments: ['All', 'Subscribed Users'],
+    included_segments: ['Subscribed Users'],
     headings: { en: `${icon} ${announcement.priorityCategory}: ${announcement.title}` },
     contents: { en: announcement.content },
     subtitle: { en: `Posted by ${announcement.byWhom || 'Management'} · Vaishnavi Pride Notice Board` },
     url: targetUrl,
     android_accent_color: color,
+    android_visibility: 1,
+    content_available: true,
+    priority: 10,
     chrome_web_icon: '/favicon.svg',
     firefox_icon: '/favicon.svg',
     web_buttons: [
       { id: 'read_notice', text: '📖 Read Notice', url: targetUrl },
     ],
-    ttl: 86400,
-    priority: announcement.priorityCategory === 'EMERGENCY' ? 10 : 8,
   };
 
   return postOneSignalNotification(body);
@@ -233,19 +236,20 @@ export async function sendAmenityPushNotification(
   const body = {
     app_id: APP_ID,
     name: `VP Amenity Reserved: ${facility}`,
-    included_segments: ['All', 'Subscribed Users'],
+    included_segments: ['Subscribed Users'],
     headings: { en: heading },
     contents: { en: contents },
     subtitle: { en: `Vaishnavi Pride Amenity Booking Engine` },
     url: targetUrl,
     android_accent_color: '9C27B0',
+    android_visibility: 1,
+    content_available: true,
+    priority: 10,
     chrome_web_icon: '/favicon.svg',
     firefox_icon: '/favicon.svg',
     web_buttons: [
       { id: 'view_amenity', text: '📅 View Booking', url: targetUrl },
     ],
-    ttl: 86400,
-    priority: 10,
   };
 
   return postOneSignalNotification(body);
