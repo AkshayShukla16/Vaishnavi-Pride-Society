@@ -83,21 +83,24 @@ export async function sendSOSPushNotification(payload: SOSPayload): Promise<{
 }> {
   const icon  = ALERT_ICONS[payload.type]  || '🚨';
   const color = ALERT_COLORS[payload.type] || 'FF3A3A';
+  const targetUrl = typeof window !== 'undefined' ? window.location.href : 'https://de-society.vercel.app';
 
   const body = {
     app_id:             APP_ID,
     name:               `VP SOS: ${payload.type} Alert`,
-    included_segments:  ['All'],
+    target_channel:     'push',
+    included_segments:  ['Subscribed Users', 'All'],
     headings:           { en: `${icon} ${payload.title}` },
     contents:           { en: payload.message },
     subtitle:           { en: `Triggered by Flat #${payload.flatNumber} · Vaishnavi Pride` },
+    url:                targetUrl,
     android_accent_color: color,
     chrome_web_icon:    '/favicon.svg',
     firefox_icon:       '/favicon.svg',
     web_buttons: [
-      { id: 'ack', text: '✅ Acknowledged', url: window.location.href },
+      { id: 'ack', text: '✅ View Alert', url: targetUrl },
     ],
-    ttl: 3600,
+    ttl: 86400,
     priority: 10,
   };
 
@@ -116,6 +119,7 @@ export async function sendTicketPushNotification(
   let color = '00B4D8';
 
   const flatInfo = ticket.flatNumber ? `Flat #${ticket.flatNumber}` : 'Common Area';
+  const targetUrl = typeof window !== 'undefined' ? window.location.href : 'https://de-society.vercel.app';
 
   if (type === 'RAISED') {
     heading = `🛠️ New Ticket Raised (${flatInfo})`;
@@ -134,17 +138,19 @@ export async function sendTicketPushNotification(
   const body = {
     app_id: APP_ID,
     name: `VP Ticket: ${type} - ${ticket.id}`,
-    included_segments: ['All'],
+    target_channel: 'push',
+    included_segments: ['Subscribed Users', 'All'],
     headings: { en: heading },
     contents: { en: contents },
     subtitle: { en: `Vaishnavi Pride Society Maintenance` },
+    url: targetUrl,
     android_accent_color: color,
     chrome_web_icon: '/favicon.svg',
     firefox_icon: '/favicon.svg',
     web_buttons: [
-      { id: 'view_ticket', text: '🔍 View Ticket', url: window.location.href },
+      { id: 'view_ticket', text: '🔍 View Ticket', url: targetUrl },
     ],
-    ttl: 3600,
+    ttl: 86400,
     priority: 10,
   };
 
@@ -173,21 +179,24 @@ export async function sendAnnouncementPushNotification(
 
   const icon = categoryIcons[announcement.priorityCategory] || '📢';
   const color = categoryColors[announcement.priorityCategory] || '00B4D8';
+  const targetUrl = typeof window !== 'undefined' ? window.location.href : 'https://de-society.vercel.app';
 
   const body = {
     app_id: APP_ID,
     name: `VP Notice: ${announcement.title}`,
-    included_segments: ['All'],
+    target_channel: 'push',
+    included_segments: ['Subscribed Users', 'All'],
     headings: { en: `${icon} ${announcement.priorityCategory}: ${announcement.title}` },
     contents: { en: announcement.content },
     subtitle: { en: `Posted by ${announcement.byWhom || 'Management'} · Vaishnavi Pride Notice Board` },
+    url: targetUrl,
     android_accent_color: color,
     chrome_web_icon: '/favicon.svg',
     firefox_icon: '/favicon.svg',
     web_buttons: [
-      { id: 'read_notice', text: '📖 Read Notice', url: window.location.href },
+      { id: 'read_notice', text: '📖 Read Notice', url: targetUrl },
     ],
-    ttl: 3600,
+    ttl: 86400,
     priority: announcement.priorityCategory === 'EMERGENCY' ? 10 : 8,
   };
 
@@ -201,22 +210,25 @@ export async function sendAmenityPushNotification(
   booking: AmenityBooking
 ): Promise<{ success: boolean; recipientCount?: number; error?: string }> {
   const facility = booking.facilityType || booking.amenityName || 'Amenity';
+  const targetUrl = typeof window !== 'undefined' ? window.location.href : 'https://de-society.vercel.app';
 
   const body = {
     app_id: APP_ID,
     name: `VP Amenity Reserved: ${facility}`,
-    included_segments: ['All'],
+    target_channel: 'push',
+    included_segments: ['Subscribed Users', 'All'],
     headings: { en: `🎉 Amenity Reserved: ${facility}` },
     contents: { en: `Booked by ${booking.personName} (Flat #${booking.flatNumber}, Ph: ${booking.mobileNumber}) for ${booking.bookingDate} (${booking.startTime} - ${booking.endTime}).` },
     subtitle: { en: `Vaishnavi Pride Amenity Booking Engine` },
+    url: targetUrl,
     android_accent_color: '9C27B0',
     chrome_web_icon: '/favicon.svg',
     firefox_icon: '/favicon.svg',
     web_buttons: [
-      { id: 'view_amenity', text: '📅 View Booking', url: window.location.href },
+      { id: 'view_amenity', text: '📅 View Booking', url: targetUrl },
     ],
-    ttl: 3600,
-    priority: 8,
+    ttl: 86400,
+    priority: 10,
   };
 
   return postOneSignalNotification(body);
