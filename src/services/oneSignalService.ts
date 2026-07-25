@@ -99,6 +99,8 @@ export async function sendSOSPushNotification(payload: SOSPayload): Promise<{
   const icon  = ALERT_ICONS[payload.type]  || '🚨';
   const color = ALERT_COLORS[payload.type] || 'FF3A3A';
   const targetUrl = typeof window !== 'undefined' ? window.location.href : 'https://de-society.vercel.app';
+  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://de-society.vercel.app';
+  const iconUrl = `${origin}/favicon.svg`;
 
   // Trigger local native browser OS push notification immediately
   notificationService.sendNotification(`${icon} ${payload.title}`, payload.message);
@@ -114,8 +116,9 @@ export async function sendSOSPushNotification(payload: SOSPayload): Promise<{
     android_accent_color: color,
     android_visibility: 1,
     priority:           10,
-    chrome_web_icon:    '/favicon.svg',
-    firefox_icon:       '/favicon.svg',
+    chrome_web_icon:    iconUrl,
+    chrome_web_badge:   iconUrl,
+    firefox_icon:       iconUrl,
     web_buttons: [
       { id: 'ack', text: '✅ View Alert', url: targetUrl },
     ],
@@ -137,6 +140,8 @@ export async function sendTicketPushNotification(
 
   const flatInfo = ticket.flatNumber ? `Flat #${ticket.flatNumber}` : 'Common Area';
   const targetUrl = typeof window !== 'undefined' ? window.location.href : 'https://de-society.vercel.app';
+  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://de-society.vercel.app';
+  const iconUrl = `${origin}/favicon.svg`;
 
   if (type === 'RAISED') {
     heading = `🛠️ New Ticket Raised (${flatInfo})`;
@@ -166,8 +171,9 @@ export async function sendTicketPushNotification(
     android_accent_color: color,
     android_visibility: 1,
     priority: 10,
-    chrome_web_icon: '/favicon.svg',
-    firefox_icon: '/favicon.svg',
+    chrome_web_icon: iconUrl,
+    chrome_web_badge: iconUrl,
+    firefox_icon: iconUrl,
     web_buttons: [
       { id: 'view_ticket', text: '🔍 View Ticket', url: targetUrl },
     ],
@@ -199,6 +205,8 @@ export async function sendAnnouncementPushNotification(
   const icon = categoryIcons[announcement.priorityCategory] || '📢';
   const color = categoryColors[announcement.priorityCategory] || '00B4D8';
   const targetUrl = typeof window !== 'undefined' ? window.location.href : 'https://de-society.vercel.app';
+  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://de-society.vercel.app';
+  const iconUrl = `${origin}/favicon.svg`;
 
   // Trigger local native browser OS push notification immediately
   notificationService.sendNotification(`${icon} ${announcement.priorityCategory}: ${announcement.title}`, announcement.content);
@@ -214,8 +222,9 @@ export async function sendAnnouncementPushNotification(
     android_accent_color: color,
     android_visibility: 1,
     priority: 10,
-    chrome_web_icon: '/favicon.svg',
-    firefox_icon: '/favicon.svg',
+    chrome_web_icon: iconUrl,
+    chrome_web_badge: iconUrl,
+    firefox_icon: iconUrl,
     web_buttons: [
       { id: 'read_notice', text: '📖 Read Notice', url: targetUrl },
     ],
@@ -232,6 +241,8 @@ export async function sendAmenityPushNotification(
 ): Promise<{ success: boolean; recipientCount?: number; error?: string }> {
   const facility = booking.facilityType || booking.amenityName || 'Amenity';
   const targetUrl = typeof window !== 'undefined' ? window.location.href : 'https://de-society.vercel.app';
+  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://de-society.vercel.app';
+  const iconUrl = `${origin}/favicon.svg`;
 
   const heading = `🎉 Amenity Reserved: ${facility}`;
   const contents = `Booked by ${booking.personName} (Flat #${booking.flatNumber}, Ph: ${booking.mobileNumber}) for ${booking.bookingDate} (${booking.startTime} - ${booking.endTime}).`;
@@ -250,8 +261,9 @@ export async function sendAmenityPushNotification(
     android_accent_color: '9C27B0',
     android_visibility: 1,
     priority: 10,
-    chrome_web_icon: '/favicon.svg',
-    firefox_icon: '/favicon.svg',
+    chrome_web_icon: iconUrl,
+    chrome_web_badge: iconUrl,
+    firefox_icon: iconUrl,
     web_buttons: [
       { id: 'view_amenity', text: '📅 View Booking', url: targetUrl },
     ],
