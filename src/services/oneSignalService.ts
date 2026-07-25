@@ -47,35 +47,44 @@ async function postOneSignalNotification(body: Record<string, any>): Promise<{
     return { success: false, error: 'OneSignal not configured.' };
   }
 
-  // Clean payload for API v1
   delete body.target_channel;
 
-  const authHeader = REST_API_KEY.startsWith('os_v2_') ? `Key ${REST_API_KEY}` : `Basic ${REST_API_KEY}`;
+  const tryPost = async (authHeaderValue: string) => {
+    try {
+      const response = await fetch('https://api.onesignal.com/api/v1/notifications', {
+        method: 'POST',
+        headers: {
+          'Content-Type':  'application/json',
+          'Authorization': authHeaderValue,
+          'Accept':        'application/json',
+        },
+        body: JSON.stringify(body),
+      });
 
-  try {
-    const response = await fetch('https://api.onesignal.com/api/v1/notifications', {
-      method: 'POST',
-      headers: {
-        'Content-Type':  'application/json',
-        'Authorization': authHeader,
-        'Accept':        'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-
-    const data = await response.json();
-
-    if (response.ok && data.id) {
-      console.log(`[OneSignal] ✅ Push Notification Dispatched! ID: ${data.id}, Recipients: ${data.recipients}`);
-      return { success: true, recipientCount: data.recipients ?? 0 };
-    } else {
-      const errMsg = Array.isArray(data.errors) ? data.errors.join(', ') : (data.errors || data.error || `HTTP ${response.status}`);
-      console.error('[OneSignal] ❌ Send failed:', errMsg);
-      return { success: false, error: String(errMsg) };
+      const data = await response.json();
+      return { response, data };
+    } catch (err: any) {
+      return { response: null, data: null, fetchError: err?.message };
     }
-  } catch (err: any) {
-    console.error('[OneSignal] ❌ Network error:', err);
-    return { success: false, error: err?.message || 'Network error.' };
+  };
+
+  // 1. Primary Attempt with Key
+  let res = await tryPost(`Key ${REST_API_KEY}`);
+
+  // 2. Fallback Attempt with Basic if 401 / 403
+  if (!res.response?.ok && (res.response?.status === 401 || res.response?.status === 403)) {
+    res = await tryPost(`Basic ${REST_API_KEY}`);
+  }
+
+  if (res.response?.ok && res.data?.id) {
+    console.log(`[OneSignal] ✅ Push Notification Dispatched! ID: ${res.data.id}, Recipients: ${res.data.recipients}`);
+    return { success: true, recipientCount: res.data.recipients ?? 0 };
+  } else {
+    const errMsg = res.data?.errors
+      ? (Array.isArray(res.data.errors) ? res.data.errors.join(', ') : JSON.stringify(res.data.errors))
+      : (res.fetchError || `HTTP ${res.response?.status}`);
+    console.error('[OneSignal] ❌ Send failed:', errMsg);
+    return { success: false, error: String(errMsg) };
   }
 }
 
