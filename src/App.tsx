@@ -81,17 +81,18 @@ export function App() {
     storageService.syncBookingsWithSupabaseDatabase();
     notificationService.requestPermission();
 
-    // Real-Time Background Sync Engine (5-Second Polling Loop)
-    // Instantly syncs database additions, edits, and deletions without requiring a manual page refresh
+    // Optimized Background Sync Engine (45-Second Polling Loop to prevent Supabase Egress quota drain)
     const syncInterval = setInterval(() => {
-      storageService.syncTicketsWithSupabaseDatabase();
-      storageService.syncWithSupabaseDatabase();
-      storageService.syncAnnouncementsWithSupabaseDatabase();
-      storageService.syncResidentsWithSupabaseDatabase();
-      storageService.syncAdminsWithSupabaseDatabase();
-      storageService.syncContactsWithSupabaseDatabase();
-      storageService.syncBookingsWithSupabaseDatabase();
-    }, 5000);
+      if (document.visibilityState === 'visible') {
+        storageService.syncTicketsWithSupabaseDatabase();
+        storageService.syncWithSupabaseDatabase();
+        storageService.syncAnnouncementsWithSupabaseDatabase();
+        storageService.syncResidentsWithSupabaseDatabase();
+        storageService.syncAdminsWithSupabaseDatabase();
+        storageService.syncContactsWithSupabaseDatabase();
+        storageService.syncBookingsWithSupabaseDatabase();
+      }
+    }, 45000);
 
     const handleUpdate = () => loadData();
     window.addEventListener('society_data_updated', handleUpdate);
