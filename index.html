@@ -16,28 +16,38 @@
     <script>
       window.OneSignalDeferred = window.OneSignalDeferred || [];
       OneSignalDeferred.push(async function(OneSignal) {
-        await OneSignal.init({
-          appId: "d97c4252-2c37-42c0-b864-51b88bab013d",
-          serviceWorkerPath: "/OneSignalSDKWorker.js",
-          promptOptions: {
-            slidedown: {
-              enabled: true,
-              autoPrompt: true,
-              timeDelay: 5,
-              pageViews: 1,
-              actionMessage: "🏢 Vaishnavi Pride Society wants to send you emergency SOS alerts.",
-              acceptButtonText: "✅ Allow Alerts",
-              cancelButtonText: "Later",
-            }
-          },
-          welcomeNotification: {
-            title: "🏢 Vaishnavi Pride Society",
-            message: "You are now subscribed to Emergency SOS Alerts!",
-          },
-          notifyButton: {
-            enable: false,
-          },
-        });
+        try {
+          await OneSignal.init({
+            appId: "d97c4252-2c37-42c0-b864-51b88bab013d",
+            serviceWorkerPath: "/OneSignalSDKWorker.js",
+            serviceWorkerParam: { scope: "/" },
+            allowLocalhostAsSecureOrigin: true,
+            promptOptions: {
+              slidedown: {
+                enabled: true,
+                autoPrompt: true,
+                timeDelay: 1,
+                pageViews: 1,
+                actionMessage: "🏢 Vaishnavi Pride Society wants to send you emergency SOS & ticket alerts.",
+                acceptButtonText: "✅ Allow Alerts",
+                cancelButtonText: "Later",
+              }
+            },
+            welcomeNotification: {
+              title: "🏢 Vaishnavi Pride Society",
+              message: "You are now subscribed to Emergency SOS & Ticket Alerts!",
+            },
+            notifyButton: {
+              enable: false,
+            },
+          });
+
+          if (window.OneSignal && window.OneSignal.Notifications && window.OneSignal.Notifications.permission !== true) {
+            window.OneSignal.Notifications.requestPermission();
+          }
+        } catch (err) {
+          console.warn('[OneSignal Init Warning]', err);
+        }
       });
     </script>
   </head>
